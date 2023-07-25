@@ -1,8 +1,5 @@
 <?php
-$conn = mysqli_connect("localhost","root","","test"); //database connection
-if(!$conn){
-    die("error in connection:".mysqli_connect_error($conn));
-}
+include "dbconnect.php";
 if($_SERVER["REQUEST_METHOD"]=="POST"){
     $ID = $_REQUEST['id']; 
     $name = $_REQUEST['name']; 
@@ -41,42 +38,8 @@ if(isset($_GET['id']))
   }
 }
 ?>
-<!-- Button trigger modal -->
-<!-- Modal START -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Update Value</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form method="POST" action="index.php">
-          <div class="mb-3">
-            <input type="number" name="id" required class="form-control" id="exampleInputEmail1"
-            aria-describedby="emailHelp">
-          </div>
-          <div class="mb-3">
-            <label for="exampleInputEmail1" class="form-label">Name</label>
-            <input type="text" class="form-control" value="hello " name="name" id="exampleInputEmail1" aria-describedby="emailHelp">
-            
-          </div>
-          <div class="mb-3">
-            <label for="exampleInputEmail1" class="form-label">Email address</label>
-        <input type="email" class="form-control" name="email" id="exampleInputEmail1" aria-describedby="emailHelp">
-        
-      </div>
-      <div class="mb-3">
-        <label for="exampleInputPassword1" class="form-label">mobile</label>
-        <input type="number" class="form-control" name="mobile" id="exampleInputPassword1">
-      </div>
-      <button type="submit" class="btn btn-primary">update</button>
-    </form>
-  </div>  
-</div>
-  </div>
-</div>
-<!-- Modal END -->
+
+
 <!doctype html>
 <html lang="en">  
   <head>
@@ -120,56 +83,95 @@ if(isset($_GET['id']))
       </div>
     </div>
   </nav>
-
-  <h1 class="text-center">Registration form</h1>
-  <div class="container p-5 my-5 bg-warning"> <!-- form star's here -->
+<!-- ###################################################################################################### -->
+<!-- MODAL WINDOW FOR ADDING USER  -->
+<!-- ###################################################################################################### -->
+<div class="modal" id="adduser" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">        
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      
+  <div class="container ">
     <form method="POST" action="index.php">
       <div class="mb-3">
         <input type="number" placeholder="id" name="id" required class="form-control" id="exampleInputEmail1"
-          aria-describedby="emailHelp">
+          aria-describedby="emailHelp" required>
       </div>
       <div class="mb-3">
         <label for="exampleInputEmail1" class="form-label">Name</label>
-        <input type="text" class="form-control" name="name" id="exampleInputEmail1" aria-describedby="emailHelp">
+        <input type="text" class="form-control" name="name" id="exampleInputEmail1" aria-describedby="emailHelp" required>
       </div>
       <div class="mb-3">
         <label for="exampleInputEmail1" class="form-label">Email address</label>
-        <input type="email" class="form-control" name="email" id="exampleInputEmail1" aria-describedby="emailHelp">
+        <input type="email" class="form-control" name="email" id="exampleInputEmail1" aria-describedby="emailHelp" required>
       </div>
       <div class="mb-3">
         <label for="exampleInputPassword1" class="form-label">mobile</label>
-        <input type="number" class="form-control" name="mobile" id="exampleInputPassword1">
+        <input type="tel" pattern="[0-9]{10}" min="10"  class="form-control" name="mobile" id="exampleInputPassword1" required>
       </div>
-      <button type="submit" class="btn btn-primary">Submit</button>
+      <button type="submit" class="btn btn-primary">Add User</button>
     </form>
   </div>
-  <div class="container p-5 bg-secondary">
+      </div>
+    
+    </div>
+  </div>
+</div>
+<!-- ###################################################################################################### -->
+<!-- MODAL WINDOW FOR ADDING USER END  -->
+<!-- ###################################################################################################### -->
+
+  <div class="container-fluid p-2 bg-dark">
     <table class="table text-light">
+    <button type="button" class="btn btn-success btn-sm edit m-1" data-bs-toggle="modal" data-bs-target="#adduser">
+            +Add User
+            </button>
       <thead>
         <tr class="bg-white text-dark">
           <th scope="col">ID</th>
           <th scope="col">NAME</th>
           <th scope="col">EMAIL</th>
           <th scope="col">MOBILE</th>
+          <th scope="col">ACTIONS</th>
         </tr>
       </thead>
 
       <tbody>
         <tr>
-          <?php while($row = mysqli_fetch_assoc($result)) {?>
-
-          <td><?php echo $row["id"] ?></td>
-          <td><?php echo $row["name"]?></td>
-          <td><?php echo $row["email"]?></td>
-          <td><?php echo $row["mobile"]?></td>
-          <td><button type="button" class="btn btn-primary edit" data-bs-toggle="modal" data-bs-target="#exampleModal">
-              Update
+          <?php while($row = mysqli_fetch_assoc($result)) {
+            $id =   $row["id"];
+            $name=  $row["name"];
+            $email= $row["email"];
+            $mobile=$row["mobile"];
+            echo '<tr> 
+            <td>'.$id.'</td>
+            <td>'.$name.'</td>
+            <td>'.$email.'</td>
+            <td>'.$mobile.'</td>
+            <td> 
+           
+            <button type="button" class="btn btn-sm btn-primary edit" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            <a href="update.php?updateid='.$id.'" class="text-light text-decoration-none"> Update  </a>
             </button>
-            <button class="btn btn-danger"><a href="index.php">delete</a></button>
-          </td>
+           
+            <button class="btn btn-danger btn-sm text-light">
+              <a href="delete.php?del_id='.$id.'" class="text-light text-decoration-none">delete</a>
+            </button>
+          
+          </td> 
+
+            </tr>';
+            
+           }
+           ?>
+
+         
 
         </tr>
-        <?php } ?>
+       
 
       </tbody>
     </table>
@@ -177,24 +179,7 @@ if(isset($_GET['id']))
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
     crossorigin="anonymous"></script>
-  <script>
-    fuction update(){
-      edits = document.getElementsByClassName('edit');
-      Arrey.from(edits).foreach((element)=>{
-        element.addEventListenar("click",(e)=>{  
-          console.log('edit',);
-          tr= e.target.parentNode.parentNode;
-          title=tr.getElementByTagName("td")[0].innerText;
-          description= tr.getElementByTagName("td")[1].innerText;
-          console.log(title,description);
-          titleEdit.value = title;
-          description.value = description;
-          $('#editmodal').modal('toggle'); 
-        })
-      })
-    }
-
-  </script>
+ 
 </body>
 
 </html>
